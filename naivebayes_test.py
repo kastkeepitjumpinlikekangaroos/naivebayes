@@ -3,22 +3,29 @@ import unittest
 
 import numpy as np
 from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
 
 import naivebayes
+
 
 class TestNaiveBayesClassifier(unittest.TestCase):
     def test_predict(self):
         c = naivebayes.NaiveBayesClassifer()
-        print('loading iris')
+
         X, y = datasets.load_iris(return_X_y=True)
-        indices = np.random.permutation(len(X))
-        X_train = X[indices[:-10]]
-        y_train = y[indices[:-10]]
-        X_test = X[indices[-10:]]
-        y_test = y[indices[-10:]]
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2)
+
+        sc = StandardScaler()
+        X_train = sc.fit_transform(X_train)
+        X_test = sc.transform(X_test)
+
         c.fit(X_train, y_train)
-        pred = c.predict(X_test)
-        print(pred, y_test)
+        y_pred = c.predict(X_test)
+        print("Accuracy : ", accuracy_score(y_test, y_pred))
 
 
 if __name__ == '__main__':

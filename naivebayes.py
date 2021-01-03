@@ -1,18 +1,15 @@
+import multiprocessing
+from functools import partial
+
 import numpy as np
+
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
 from sklearn.utils.multiclass import unique_labels
-from sklearn.metrics import euclidean_distances
 
 
 class NaiveBayesClassifer(ClassifierMixin, BaseEstimator):
-    """ An example classifier which implements a 1-NN algorithm.
-    For more information regarding how to build your own classifier, read more
-    in the :ref:`User Guide <user_guide>`.
-    Parameters
-    ----------
-    demo_param : str, default='demo'
-        A parameter used for demonstation of how to pass and store paramters.
+    """ A classifier which implements a naive bayes algorithm.
     Attributes
     ----------
     X_ : ndarray, shape (n_samples, n_features)
@@ -22,11 +19,9 @@ class NaiveBayesClassifer(ClassifierMixin, BaseEstimator):
     classes_ : ndarray, shape (n_classes,)
         The classes seen at :meth:`fit`.
     """
-    def __init__(self, demo_param='demo'):
-        self.demo_param = demo_param
 
     def fit(self, X, y):
-        """A reference implementation of a fitting function for a classifier.
+        """Fits the model
         Parameters
         ----------
         X : array-like, shape (n_samples, n_features)
@@ -49,7 +44,7 @@ class NaiveBayesClassifer(ClassifierMixin, BaseEstimator):
         return self
 
     def predict(self, X):
-        """ A reference implementation of a prediction for a classifier.
+        """ Uses naive bayes algorithm to make a prediction
         Parameters
         ----------
         X : array-like, shape (n_samples, n_features)
@@ -66,5 +61,23 @@ class NaiveBayesClassifer(ClassifierMixin, BaseEstimator):
         # Input validation
         X = check_array(X)
 
-        closest = np.argmin(euclidean_distances(X, self.X_), axis=1)
-        return self.y_[closest]
+        func = partial(self._bayes_classification, X=self.X_, y=self.y_)
+        with multiprocessing.Pool() as p:
+            pred = p.map(func, X)
+        return pred
+
+    @staticmethod
+    def _bayes_classification(x, X, y):
+        data = np.column_stack((X, y))
+        classes = np.unique(y)
+        class_probs = np.array([])
+        for cls in classes:
+            prob = data[data[:, -1] == cls].shape[0] / data.shape[0]
+            for feature in np.arange(x.shape[0]):
+                prob_ = data[
+                    (data[:, -1] == cls) &
+                    (data[:, feature] == x[feature])
+                ].shape[0] / data[data[:, -1] == cls].shape[0]
+                prob = prob * prob_
+            class_probs = np.append(class_probs, prob)
+        return classes[np.argmax(class_probs)]

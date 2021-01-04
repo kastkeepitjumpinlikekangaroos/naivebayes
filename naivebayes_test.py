@@ -15,7 +15,7 @@ class TestNaiveBayesClassifier(unittest.TestCase):
     def test_predict(self):
         c = naivebayes.NaiveBayesClassifer()
 
-        X, y = datasets.load_iris(return_X_y=True)
+        X, y = datasets.load_breast_cancer(return_X_y=True)
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2)
 

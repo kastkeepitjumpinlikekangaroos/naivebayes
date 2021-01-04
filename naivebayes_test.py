@@ -12,20 +12,33 @@ import naivebayes
 
 
 class TestNaiveBayesClassifier(unittest.TestCase):
-    def test_predict(self):
-        c = naivebayes.NaiveBayesClassifer()
-
+    def test_predict_breast_cancer(self):
         X, y = datasets.load_breast_cancer(return_X_y=True)
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2)
 
-        sc = KBinsDiscretizer(n_bins=5, encode='onehot-dense', strategy='kmeans')
-        X_train = sc.fit_transform(X_train)
-        X_test = sc.transform(X_test)
+        t = KBinsDiscretizer(n_bins=5, encode='onehot-dense', strategy='kmeans')
+        X_train = t.fit_transform(X_train)
+        X_test = t.transform(X_test)
 
+        c = naivebayes.NaiveBayesClassifer()
         c.fit(X_train, y_train)
         y_pred = c.predict(X_test)
-        print("Accuracy : ", accuracy_score(y_test, y_pred))
+        print("BC Accuracy : ", accuracy_score(y_test, y_pred))
+
+    def test_iris(self):
+        X, y = datasets.load_iris(return_X_y=True)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2)
+
+        t = KBinsDiscretizer(n_bins=5, encode='onehot-dense', strategy='kmeans')
+        X_train = t.fit_transform(X_train)
+        X_test = t.transform(X_test)
+
+        c = naivebayes.NaiveBayesClassifer()
+        c.fit(X_train, y_train)
+        y_pred = c.predict(X_test)
+        print("Iris Accuracy : ", accuracy_score(y_test, y_pred))
 
 
 if __name__ == '__main__':

@@ -52,8 +52,10 @@ class NaiveBayesClassifer(ClassifierMixin, BaseEstimator):
         Returns
         -------
         y : ndarray, shape (n_samples,)
-            The label for each sample is the label of the closest sample
-            seen during fit.
+            The label for each sample is the label of the class with
+            the highest probability according to the algorithm outlined
+            here:
+            https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Constructing_a_classifier_from_the_probability_model
         """
         # Check is fit had been called
         check_is_fitted(self, ['X_', 'y_'])

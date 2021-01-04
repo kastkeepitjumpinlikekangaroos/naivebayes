@@ -71,13 +71,18 @@ class NaiveBayesClassifer(ClassifierMixin, BaseEstimator):
         data = np.column_stack((X, y))
         classes = np.unique(y)
         class_probs = np.array([])
+        # get probability for each class
         for cls in classes:
+            # P(cls)
             prob = data[data[:, -1] == cls].shape[0] / data.shape[0]
             for feature in np.arange(x.shape[0]):
+                # P(x[feature] | cls)
                 prob_ = data[
                     (data[:, -1] == cls) &
                     (data[:, feature] == x[feature])
                 ].shape[0] / data[data[:, -1] == cls].shape[0]
+                # P(cls) * (P(x[feature] | cls) for each feature)
                 prob = prob * prob_
             class_probs = np.append(class_probs, prob)
+        # return class with max probability
         return classes[np.argmax(class_probs)]

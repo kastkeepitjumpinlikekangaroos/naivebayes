@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.metrics import accuracy_score
 
 
@@ -19,7 +19,7 @@ class TestNaiveBayesClassifier(unittest.TestCase):
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2)
 
-        sc = StandardScaler()
+        sc = KBinsDiscretizer(n_bins=5, encode='onehot-dense', strategy='kmeans')
         X_train = sc.fit_transform(X_train)
         X_test = sc.transform(X_test)
 

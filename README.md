@@ -4,6 +4,6 @@ Naive bayes classifier algorithm implemented from scratch with numpy (the algori
 
 For more details on the algorithm used see this link: [https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Constructing_a_classifier_from_the_probability_model](https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Constructing_a_classifier_from_the_probability_model)
 
-Dependencies: `numpy==1.19.4` and `scikit-learn==0.24.0`
+Dependencies: `scikit-learn==1.1.3`
 
 Run tests: `$ python -m unittest naivebayes_test.py`

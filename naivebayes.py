@@ -63,26 +63,32 @@ class NaiveBayesClassifer(ClassifierMixin, BaseEstimator):
         # Input validation
         X = check_array(X)
 
-        func = partial(self._bayes_classification, X=self.X_, y=self.y_)
+        func = partial(self._bayes_classification, X=self.X_, y=self.y_, classes=self.classes_)
         with multiprocessing.Pool() as p:
             pred = p.map(func, X)
         return pred
 
     @staticmethod
-    def _bayes_classification(x, X, y):
+    def _bayes_classification(x, X, y, classes):
+        # merge training data with labels
         data = np.column_stack((X, y))
-        classes = np.unique(y)
         class_probs = np.array([])
         # get probability for each class
         for cls in classes:
+            # bitmask for the rows in this class
+            class_eq_bitmask = data[:, -1] == cls
             # P(cls)
-            prob = data[data[:, -1] == cls].shape[0] / data.shape[0]
-            for feature in np.arange(x.shape[0]):
+            prob = len(data[class_eq_bitmask]) / len(data)
+            for feature in np.arange(len(x)):
                 # P(x[feature] | cls)
-                prob_ = data[
-                    (data[:, -1] == cls) &
-                    (data[:, feature] == x[feature])
-                ].shape[0] / data[data[:, -1] == cls].shape[0]
+                prob_ = (
+                    len(data[
+                        (class_eq_bitmask) &
+                        (data[:, feature] == x[feature])  # rows where class and feature value match
+                    ])
+                    /
+                    len(data[class_eq_bitmask])
+                )
                 # P(cls) * (P(x[feature] | cls) for each feature)
                 prob = prob * prob_
             class_probs = np.append(class_probs, prob)

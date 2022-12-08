@@ -64,13 +64,13 @@ class NaiveBayesClassifer(ClassifierMixin, BaseEstimator):
 
         # Input validation
         X = check_array(X)
-        func = partial(self._bayes_classification, data=self.data_, classes=self.classes_, class_priors=self.class_priors_)
+        func = partial(self._naive_bayes_classification, data=self.data_, classes=self.classes_, class_priors=self.class_priors_)
         with multiprocessing.Pool() as p:
             pred = p.map(func, X)
         return pred
 
     @staticmethod
-    def _bayes_classification(X, data, classes, class_priors):
+    def _naive_bayes_classification(X, data, classes, class_priors):
         class_probs = np.array([])
         for cls, cls_prior in zip(classes, class_priors):
             # bitmask for the rows in this class

@@ -2,14 +2,12 @@ import math
 import unittest
 
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.naive_bayes import GaussianNB
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.metrics import accuracy_score
 from sklearn.dummy import DummyClassifier
-from memory_profiler import profile
 
 
 import naivebayes
@@ -26,7 +24,7 @@ class TestNaiveBayesClassifier(unittest.TestCase):
         y_pred = c.predict(X_test)
         print("Dummy Wine Accuracy: ", accuracy_score(y_test, y_pred))
 
-    def test_wine_gausian(self):
+    def test_wine_gaussian(self):
         X, y = datasets.load_wine(return_X_y=True)
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2)
@@ -60,7 +58,7 @@ class TestNaiveBayesClassifier(unittest.TestCase):
         y_pred = c.predict(X_test)
         print("Dummy Digits Accuracy: ", accuracy_score(y_test, y_pred))
 
-    def test_digits_gausian(self):
+    def test_digits_gaussian(self):
         X, y = datasets.load_digits(return_X_y=True)
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2)
@@ -79,15 +77,6 @@ class TestNaiveBayesClassifier(unittest.TestCase):
         c.fit(X_train, y_train)
         y_pred = c.predict(X_test)
 
-        images = np.reshape(X_test, (X_test.shape[0], 8, 8))
-        count = 0
-        for i, (y1, y2) in enumerate(zip(y_pred, y_test)):
-            if y1 == y2:
-                #print(y1, y2)
-                if count < 5:
-                    count += 1
-                    #plt.matshow(images[i])
-                    #plt.show()
         print("Digits Accuracy: ", accuracy_score(y_test, y_pred))
 
 
